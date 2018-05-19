@@ -1,5 +1,7 @@
 ---
 title: "KubeCon Europe 2018 Highlights"
+header:
+  image: images/2018-05-19-kubecon-europe-2018-highlights.jpg
 categories:
   - Kubernetes
 tags:
