@@ -19,7 +19,7 @@ locale                   : "en-US"
 title                    : "sbueringer.github.io"
 title_separator          : "-"
 name                     : "Stefan Büringer"
-description              : ""
+description              : "My personal blog about my live as Software Developer. Possible topics are Docker, Kubernetes, Golang and whatever else interests me."
 url                      : "https://sbueringer.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "sbueringer/sbueringer.github.io"
@@ -96,12 +96,12 @@ social:
   - "https://www.facebook.com/stefan.buringer"
   - "https://www.linkedin.com/in/stefan-büringer-a1b33258/"
   - "https://www.xing.com/profile/sbueringer"
-  
+
 # Analytics
 analytics:
   provider               : "google-gtag" # false (default), "google", "google-universal", "custom"
   google:
-    tracking_id          : "UA-38036816-2"
+    tracking_id          : "UA-119567122-1"
     anonymize_ip         : false # true, false (default)
 
 
