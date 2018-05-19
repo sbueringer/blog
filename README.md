@@ -13,3 +13,17 @@ bundle update
 ````
 bundle exec jekyll serve
 ````
+
+# TODO
+ 
+````
+verify tags/ categories
+
+Bild im Kube Post zu groß
+
+SEO
+Analytics
+Description
+
+
+````
