@@ -13,14 +13,3 @@ bundle update
 ````
 bundle exec jekyll serve
 ````
-
-# TODO
- 
-````
-
-SEO
-Analytics
-Description
-
-
-````
