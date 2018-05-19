@@ -106,7 +106,7 @@ author:
   bio              : ""
   location         : "Ulm"
   email            : 
-  uri              : "https://sbueringer.github.io"
+  uri              : 
   home             : "https://sbueringer.github.io"
   bitbucket        :
   codepen          :
@@ -129,7 +129,7 @@ author:
   twitter          : "sbueringer"
   vine             :
   weibo            :
-  xing             : "sbueringer"
+  xing             : "Stefan_Bueringer"
   youtube          : # "https://youtube.com/c/MichaelRoseDesign"
 
 
