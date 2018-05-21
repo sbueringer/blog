@@ -1,20 +1,22 @@
-# Impressum
+---
+title: "Impressum"
+---
 
 ## Angaben gemäß § 5 TMG:
 
-Stefan Büringer </br>
-Weidweg, 7 </br>
+Stefan Büringer <br />
+Weidweg, 7 <br />
 89134 Weidach
 
 ## Kontakt:
 
-Telefon: +49 (0) 176 30921156 </br>
+Telefon: +49 (0) 176 30921156 <br />
 E-Mail: github.sbueringer@gmail.com
 
 ## Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
 
-Stefan Büringer </br>
-Weidweg 7 </br>
+Stefan Büringer <br />
+Weidweg 7 <br />
 89134 Blaustein
 
 ## Haftung für Inhalte
