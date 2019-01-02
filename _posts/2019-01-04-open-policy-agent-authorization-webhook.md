@@ -25,8 +25,8 @@ We are a team providing managed Kubernetes clusters to our company-internal cust
 ## Whitelist vs. Blacklist
 
 Most requirements regarding Authorization can be implemented by simply using the RBAC authorization module via Roles and RoleBindings, which are explained in [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/). But RBAC is by design limited to whitelisting, i.e. for every requests it's checked if one of the Roles and RoleBindings apply and in that case the request is approved. Requests are only denied if there is no match, there is no way to deny requests explicitly. At first this doesn't sound like a big limitation, but some specific use cases require more flexibility. For example:
-* A user should be able to create/ update/ delete pods in all namespaces except `kube-system`. The only way to implement this via RBAC is to assign the rights on a per-namespaces basis, e.g. by deploying a ClusterRole and a per-namespace RoleBinding. If the namespaces change over time you have to either deploy this RoleBindings manually or run an operator for this.
-* A Kubernetes cluster is provided with pre-installed StorageClasses. A user should be able to create/ update/ delete custom StorageClasses, but he shouldn't be able to modify the pre-installed ones. If this would be implemented via RBAC, the user must have the right to create StorageClasses and as soon as he creates a StorageClass additional rights must be assigned to update and delete this StorageClass. As above, this could be implemented via an operator.  
+* A user should be able to create/update/delete pods in all namespaces except `kube-system`. The only way to implement this via RBAC is to assign the rights on a per-namespaces basis, e.g. by deploying a ClusterRole and a per-namespace RoleBinding. If the namespaces change over time you have to either deploy this RoleBindings manually or run an operator for this.
+* A Kubernetes cluster is provided with pre-installed StorageClasses. A user should be able to create/update/delete custom StorageClasses, but he shouldn't be able to modify the pre-installed ones. If this would be implemented via RBAC, the user must have the right to create StorageClasses and as soon as he creates a StorageClass additional rights must be assigned to update and delete this StorageClass. As above, this could be implemented via an operator.  
 When you have lot of this use cases, you'll get a lot of custom logic implemented via operators. Sooner or later this doesn't scale, because with a lof of operators and accompanying RBAC Roles it gets really hard to understand what rights a user actually has. We will show that both cases can be implemented easier via Open Policy Agent.
 
 ## Webhook Authorization Module vs. ValidatingWebhook & MutatingWebhook
@@ -46,7 +46,7 @@ For every request the Kubernetes API Server receives, the following sequence is 
 1. Based on the user information extracted by the authentication the request is authorized:
     1. First the Webhook is called. In our case, the Webhook can either deny the request or forward it to RBAC. The Kubernetes Webhook can also allow requests, but that's not implemented in Kubernetes Policy Controller.
     1. Second the RBAC module is executed. If RBAC doesn't allow the request, the request is denied.
-1. If the request leads to a change in the persistence, e.g. create/ update/ delete a resource, Admission Controllers are executed (MutatingWebhook is only one of them). Read more about Admission Controllers [here](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/). 
+1. If the request leads to a change in the persistence, e.g. create/update/delete a resource, Admission Controllers are executed (MutatingWebhook is only one of them). Read more about Admission Controllers [here](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/). 
 
 So depending on what exactly we want to deny, we now can implement authorization or admission OPA policies. Further information how this scenario is configured can be found here [Azure/kubernetes-policy-controller Authorization scenario](https://github.com/Azure/kubernetes-policy-controller).
 
@@ -55,9 +55,9 @@ So depending on what exactly we want to deny, we now can implement authorization
 
 This section shows how this setup is used to implement the use cases described above:
 
-## Create/ update/ delete pods in every namespace except kube-system
+## Create/update/delete pods in every namespace except kube-system
 
-First of all, we grant the group `user` the rights to create/ update/ delete pods via RBAC:
+First of all, we grant the group `user` the rights to create/update/delete pods via RBAC:
 
 ````yaml
 kind: ClusterRole
@@ -83,7 +83,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ````
 
-Now every user in the group `user` is allowed to create/ update/ delete pods cluster-wide. To restrict these rights via OPA the following policy is deployed:
+Now every user in the group `user` is allowed to create/update/delete pods cluster-wide. To restrict these rights via OPA the following policy is deployed:
 
 ````
 package authorization
@@ -97,7 +97,7 @@ deny[{
 		"namespace": namespace,
 		"name": name,
 	},
-	"resolution": {"message": "Your're not allowed to create/ update/ delete pods in kube-system"},
+	"resolution": {"message": "Your're not allowed to create/update/delete pods in kube-system"},
 }] {
 	matches[[kind, namespace, name, resource]]
 
@@ -114,9 +114,9 @@ Notes:
 * We have to be careful to deny the correct verbs. A simple `delete` in RBAC allows `delete` and  `deletecollection` (cf. [Authorization Overview](https://kubernetes.io/docs/reference/access-authn-authz/authorization/)).
 * Open Policy Agent makes it also very easy to write unit tests for all our policies. For more information, see [How Do I Test Policies?](https://www.openpolicyagent.org/docs/how-do-i-test-policies.html)
 
-## Create/ update/ delete on specific StorageClasses 
+## Create/update/delete on specific StorageClasses 
 
-As in the first example, we first have to grant user access via RBAC:
+As in the first example, we have to grant user access via RBAC:
 
 ````yaml
 kind: ClusterRole
@@ -198,5 +198,7 @@ In summary, OPA allows far more flexible policies compared to the built-in RBAC 
 * Allow access to ValidatingWebhookConfigurations except some pre-installed ones
 
 What do you think about Open Policy Agent as policy engine for Kubernetes? What are your use-cases and are they already covered by RBAC? If not, what would you like to implement via the Open Policy Agent?
+
+If there are any further questions, contact me via [@sbueringer](https://twitter.com/sbueringer)
 
 Thanks to all contributors of Open Policy Agent and Kubernetes Policy Controller Special thanks to [Nikhil Bhatia](https://github.com/rite2nikhil) and [Torin Sandall](https://github.com/tsandall) for their support for our implementation of the authorization module integration of Open Policy Agent.
