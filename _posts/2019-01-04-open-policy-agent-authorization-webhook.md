@@ -57,7 +57,7 @@ This section shows how this setup is used to implement the use cases described a
 
 ## Create/update/delete pods in every namespace except kube-system
 
-First of all, we grant the group `user` the rights to create/update/delete pods via RBAC:
+The basic idea is to grant create/update/delete rights on pods cluster-wide via RBAC and then OPA policies are used to deny access to pods in kube-system. First of all, we grant the group `user` the rights to create/update/delete pods:
 
 ````yaml
 kind: ClusterRole
@@ -85,7 +85,7 @@ roleRef:
 
 Now every user in the group `user` is allowed to create/update/delete pods cluster-wide. To restrict these rights via OPA the following policy is deployed:
 
-````
+````ruby
 package authorization
 
 import data.k8s.matches
@@ -117,7 +117,7 @@ deny[{
 
 ## Create/update/delete on specific StorageClasses 
 
-As in the first example, we have to grant user access via RBAC:
+In this example, we want to grant the user create/update/delete rights to all StorageClasses except ceph. As in the first example, we have to grant the user access via RBAC:
 
 ````yaml
 kind: ClusterRole
@@ -143,9 +143,9 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ````
 
-In our case, we only want to restrict access to a StorageClass called `ceph`. So we're deploying the following policy:
+Now we're denying access to the StorageClass ceph via OPA. So we're deploying the following policy:
 
-````
+````ruby
 package authorization
 
 import data.k8s.matches
@@ -169,7 +169,8 @@ deny[{
 
 An unit test for this policy can be implemented like this:
 
-````
+````ruby
+package authorization
 
 test_deny_update_storageclass_ceph {
 	deny[{"id": id, "resource": {"kind": "storageclasses", "namespace": "", "name": "ceph"}, "resolution": resolution}] with data.kubernetes.storageclasses[""].ceph as {
